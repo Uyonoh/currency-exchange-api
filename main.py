@@ -126,5 +126,3 @@ async def get_pair_rate(base_currency: str, target_currency: str) -> models.Rate
         last_updated=manager.last_updated or datetime.now(timezone.utc),
         source=manager.active_source or "unknown",
     )
-
-if __name__ == "__main__":
