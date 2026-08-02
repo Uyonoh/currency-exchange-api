@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import FastAPI, Query, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app import models
@@ -46,6 +47,21 @@ app = FastAPI(
         f"Supported currencies: {', '.join(sorted(SUPPORTED_CURRENCIES))}."
     ),
     lifespan=lifespan,
+)
+
+origins = [
+    "http://localhost:3000",          # Next.js local development
+    "http://10.78.105.27:3000",   # remote dev
+    "https://prompts.uyonoh.com",
+]
+
+# 2. Add the CORS middleware to the app instance
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,            # Allows requests from specified origins
+    allow_credentials=True,
+    allow_methods=["GET"],              # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],              # Allows all headers
 )
 
 
@@ -110,3 +126,5 @@ async def get_pair_rate(base_currency: str, target_currency: str) -> models.Rate
         last_updated=manager.last_updated or datetime.now(timezone.utc),
         source=manager.active_source or "unknown",
     )
+
+if __name__ == "__main__":
